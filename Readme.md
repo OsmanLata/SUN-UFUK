@@ -1,0 +1,225 @@
+import pygame
+import sys
+import math
+
+# Pygame Başlat
+pygame.init()
+
+# Ekran Ayarları
+GENISLIK, YUKSEKLIK = 800, 600
+ekran = pygame.display.set_mode((GENISLIK, YUKSEKLIK))
+pygame.display.set_caption("B737 MAX 8 - Ultimate PFD (Direction Corrected)")
+
+# Renkler
+GOKYUZU_MAVISI = (30, 144, 255)
+TOPRAK_KAHVESI = (139, 69, 19)
+BEYAZ = (255, 255, 255)
+SARI = (255, 255, 0)
+YESIL = (0, 255, 0)
+SIYAH = (0, 0, 0)
+GRI = (40, 40, 40)
+KIRMIZI = (255, 0, 0)
+TURUNCU = (255, 140, 0) 
+PEMBE = (255, 0, 255)
+
+# Uçuş Verileri
+sanal_pitch, sanal_roll = 0.0, 0.0      
+speed, altitude, heading = 250.0, 10000.0, 360.0  
+pitch_hizi, roll_hizi, g_force_display = 0.0, 0.0, 1.0 
+
+# Limitler
+V_STALL, BANK_CAUTION_LIMIT = 120.0, 35.0 
+
+# Fontlar
+font_kucuk = pygame.font.SysFont("Arial", 14, bold=True)
+font_orta = pygame.font.SysFont("Arial", 18, bold=True)
+font_buyuk = pygame.font.SysFont("Arial", 28, bold=True) 
+font_ikaz_dev = pygame.font.SysFont("Arial", 48, bold=True) 
+font_g = pygame.font.SysFont("Arial", 28, bold=True)
+
+saat = pygame.time.Clock()
+
+def dikey_bant_ciz(yuzey, x, y, genislik, yukseklik, deger, adim, olcek, birim_etiketi, renk_kodu, limit_alt=None, limit_ust=None):
+    pygame.draw.rect(yuzey, GRI, (x, y, genislik, yukseklik))
+    pygame.draw.rect(yuzey, BEYAZ, (x, y, genislik, yukseklik), 2)
+    merkez_y = y + yukseklik // 2
+    baslangic, bitis = int(deger - (yukseklik/olcek/2)), int(deger + (yukseklik/olcek/2))
+    
+    if limit_ust and int(merkez_y + (deger - limit_ust) * olcek) > y:
+        pygame.draw.rect(yuzey, KIRMIZI, (x + genislik - 8, y, 8, min(int(merkez_y + (deger - limit_ust) * olcek) - y, yukseklik)))
+    if limit_alt and int(merkez_y + (deger - limit_alt) * olcek) < y + yukseklik:
+        ay = max(y, int(merkez_y + (deger - limit_alt) * olcek))
+        pygame.draw.rect(yuzey, KIRMIZI, (x + genislik - 8, ay, 8, (y + yukseklik) - ay))
+
+    for v in range(baslangic - adim, bitis + adim):
+        if v % adim == 0:
+            dy = int(merkez_y + (deger - v) * olcek)
+            if y < dy < y + yukseklik:
+                pygame.draw.line(yuzey, BEYAZ, (x, dy), (x + 15, dy), 2)
+                yuzey.blit(font_orta.render(str(v), True, BEYAZ), (x + 25, dy - 10))
+    
+    ky = merkez_y - 18
+    aktif_c = KIRMIZI if (limit_ust and deger >= limit_ust) or (limit_alt and deger <= limit_alt) else renk_kodu
+    pygame.draw.rect(yuzey, SIYAH, (x - 5, ky, genislik + 10, 36))
+    pygame.draw.rect(yuzey, aktif_c, (x - 5, ky, genislik + 10, 36), 2)
+    yuzey.blit(font_buyuk.render(f"{int(deger)}", True, aktif_c), (x + 15, ky + 4))
+    yuzey.blit(font_kucuk.render(birim_etiketi, True, BEYAZ), (x + genislik//2 - 15, y - 20))
+
+def yatay_pusula_ciz(yuzey, x, y, genislik, yukseklik, deger):
+    pygame.draw.rect(yuzey, GRI, (x, y, genislik, yukseklik))
+    pygame.draw.rect(yuzey, BEYAZ, (x, y, genislik, yukseklik), 2)
+    mx = x + genislik // 2
+    for v in range(int(deger - 40), int(deger + 40)):
+        if v % 10 == 0:
+            dx = (v - deger) * 4
+            if x < mx + dx < x + genislik:
+                pygame.draw.line(yuzey, BEYAZ, (mx + dx, y), (mx + dx, y + 10), 2)
+                if v % 30 == 0:
+                    val = v % 360
+                    yuzey.blit(font_kucuk.render(str(360 if val==0 else val), True, BEYAZ), (mx + dx - 10, y + 15))
+    pygame.draw.polygon(yuzey, SARI, [(mx, y), (mx - 10, y - 10), (mx + 10, y - 10)])
+
+def roll_skalasi_ciz(yuzey, mx, my, r, roll):
+    col = SARI if abs(roll) >= BANK_CAUTION_LIMIT else BEYAZ
+    for a in [-60, -45, -30, -20, -10, 0, 10, 20, 30, 45, 60]:
+        rad = math.radians(a - 90)
+        pygame.draw.line(yuzey, col, (mx+r*math.cos(rad), my+r*math.sin(rad)), (mx+(r+(12 if abs(a)==45 or a==0 else 8))*math.cos(rad), my+(r+(12 if abs(a)==45 or a==0 else 8))*math.sin(rad)), 3)
+    s_rad = math.radians(roll - 90)
+    pygame.draw.line(yuzey, col, (mx+(r-10)*math.cos(s_rad), my+(r-10)*math.sin(s_rad)), (mx+(r+5)*math.cos(s_rad), my+(r+5)*math.sin(s_rad)), 5)
+
+def pull_up_ikazi_ciz(yuzey, mx, my, blink):
+    if not blink: return
+    ok_poly = [(mx-20, my-30), (mx-20, my-100), (mx-40, my-100), (mx, my-160), (mx+40, my-100), (mx+20, my-100), (mx+20, my-30)]
+    pygame.draw.polygon(yuzey, KIRMIZI, ok_poly); pygame.draw.polygon(yuzey, BEYAZ, ok_poly, 3)
+    txt = font_ikaz_dev.render("PULL UP", True, BEYAZ)
+    tr = txt.get_rect(center=(mx, my - 100))
+    pygame.draw.rect(yuzey, SIYAH, tr.inflate(10, 5)); yuzey.blit(txt, tr)
+
+def ana_dongu():
+    global sanal_pitch, sanal_roll, speed, altitude, heading, pitch_hizi, roll_hizi, g_force_display
+    calisiyor, ap_on = True, False
+    u_mx, u_my, u_r = GENISLIK // 2, YUKSEKLIK // 2, 200
+    p_mask = pygame.Surface((GENISLIK, YUKSEKLIK), pygame.SRCALPHA)
+    p_mask.fill(SIYAH)
+    pygame.draw.circle(p_mask, (0, 0, 0, 0), (u_mx, u_my), u_r)
+
+    while calisiyor:
+        for ev in pygame.event.get():
+            if ev.type == pygame.QUIT: calisiyor = False
+            if ev.type == pygame.KEYDOWN and ev.key == pygame.K_f: ap_on = not ap_on
+
+        t = pygame.key.get_pressed()
+        if ap_on:
+            pitch_hizi = max(-0.5, min(0.5, (0.0 - sanal_pitch) / 100.0))
+            # Otopilot toparlanma yönü senkronize edildi
+            roll_hizi = max(-0.8, min(0.8, (0.0 - sanal_roll) / 80.0))
+            sanal_pitch += pitch_hizi; sanal_roll += roll_hizi
+            speed += 0.08 if speed < 239.8 else -0.08 if speed > 240.2 else 0
+        else:
+            if t[pygame.K_UP]: pitch_hizi += 0.05
+            elif t[pygame.K_DOWN]: pitch_hizi -= 0.05
+            else: pitch_hizi *= 0.96
+            pitch_hizi = max(-2.5, min(2.5, pitch_hizi)); sanal_pitch += pitch_hizi
+            
+            # --- YÖN DÜZELTMESİ BURASI ---
+            if t[pygame.K_LEFT]: roll_hizi -= 0.12 # Sola basınca ADI sağa gider (Negatif açı)
+            elif t[pygame.K_RIGHT]: roll_hizi += 0.12 # Sağa basınca ADI sola gider (Pozitif açı)
+            else: roll_hizi *= 0.95
+            
+            roll_hizi = max(-3.0, min(3.0, roll_hizi)); sanal_roll += roll_hizi
+            if t[pygame.K_w]: speed += 1.5
+            if t[pygame.K_s]: speed -= 1.5
+        
+        if t[pygame.K_d]: heading += 1.0
+        if t[pygame.K_a]: heading -= 1.0
+
+        v_s_fpm = speed * 101.268 * math.sin(math.radians(sanal_pitch))
+        altitude += v_s_fpm / 3600.0
+        sanal_pitch = (sanal_pitch + 180) % 360 - 180
+        sanal_roll = (sanal_roll + 180) % 360 - 180
+        speed = max(0.0, min(500.0, speed)); altitude = max(0.0, altitude)
+
+        a_v_max = 340.0 if altitude <= 26000.0 else 340.0 - ((altitude - 26000.0) / 1000.0) * 4.5
+        g_force_display += ((math.cos(math.radians(sanal_pitch)) * math.cos(math.radians(sanal_roll)) + ((speed * 0.514) * math.radians(pitch_hizi * 60)) / 9.81) - g_force_display) * 0.1
+
+        # Gimbal Flip Logic
+        if sanal_pitch > 90: g_p, g_r = 180 - sanal_pitch, sanal_roll + 180
+        elif sanal_pitch < -90: g_p, g_r = -180 - sanal_pitch, sanal_roll + 180
+        else: g_p, g_r = sanal_pitch, sanal_roll
+
+        ekran.fill(SIYAH)
+        cam = pygame.Surface((1600, 1600), pygame.SRCALPHA)
+        u_y = int(800 + (g_p * 8))
+        pygame.draw.rect(cam, GOKYUZU_MAVISI, (0, 0, 1600, u_y))
+        pygame.draw.rect(cam, TOPRAK_KAHVESI, (0, u_y, 1600, 1600 - u_y))
+        pygame.draw.line(cam, BEYAZ, (0, u_y), (1600, u_y), 4)
+
+        for p in range(-90, 91, 10):
+            if p == 0: continue
+            yc = int(u_y - (p * 8))
+            if 0 < yc < 1600:
+                gn = 100 if p > 0 else 60
+                pygame.draw.line(cam, BEYAZ, (800-gn//2, yc), (800+gn//2, yc), 3)
+                txt = font_kucuk.render(str(abs(p)), True, BEYAZ)
+                cam.blit(txt, (800+gn//2+10, yc-8)); cam.blit(txt, (800-gn//2-25, yc-8))
+
+        rot = pygame.transform.rotate(cam, g_r)
+        ekran.blit(rot, rot.get_rect(center=(u_mx, u_my)).topleft)
+        ekran.blit(p_mask, (0, 0))
+        roll_skalasi_ciz(ekran, u_mx, u_my, u_r, sanal_roll)
+
+        pygame.draw.line(ekran, SARI, (u_mx-70, u_my), (u_mx-20, u_my), 5)
+        pygame.draw.line(ekran, SARI, (u_mx-20, u_my), (u_mx-20, u_my+20), 5)
+        pygame.draw.line(ekran, SARI, (u_mx+20, u_my), (u_mx+70, u_my), 5)
+        pygame.draw.line(ekran, SARI, (u_mx+20, u_my), (u_mx+20, u_my+20), 5)
+        pygame.draw.rect(ekran, KIRMIZI, (u_mx-5, u_my-5, 10, 10))
+
+        dikey_bant_ciz(ekran, 80, 150, 80, 300, speed, 20, 3.0, "SPD", YESIL, V_STALL, a_v_max)
+        dikey_bant_ciz(ekran, GENISLIK - 160, 150, 80, 300, altitude, 100, 0.5, "ALT", SARI)
+        yatay_pusula_ciz(ekran, GENISLIK // 2 - 150, YUKSEKLIK - 80, 300, 40, heading % 360)
+
+        # Mach & Baro
+        tas = speed * (1 + (altitude / 1000.0) * 0.02)
+        ses = 661.47 - (min(altitude, 36000.0) / 1000.0) * 2.0
+        mach = tas / ses
+        if mach >= 0.4: ekran.blit(font_orta.render(f"{mach:.2f}", True, PEMBE), (95, 105))
+        ekran.blit(font_orta.render("29.92", True, PEMBE), (GENISLIK - 150, 460))
+
+        blink = (pygame.time.get_ticks() // 250) % 2 == 0
+        if blink:
+            msg = "OVERSPEED" if speed >= a_v_max else "STALL" if speed <= V_STALL else None
+            if msg:
+                tr = font_buyuk.render(msg, True, KIRMIZI)
+                pygame.draw.rect(ekran, SIYAH, (GENISLIK//2 - tr.get_width()//2 - 5, 20, tr.get_width() + 10, 35))
+                ekran.blit(tr, (GENISLIK//2 - tr.get_width()//2, 22))
+            if abs(sanal_roll) >= BANK_CAUTION_LIMIT:
+                br = font_buyuk.render("BANK ANGLE", True, SARI)
+                y_pos = 60 if msg else 20
+                pygame.draw.rect(ekran, SIYAH, (GENISLIK//2 - br.get_width()//2 - 5, y_pos, br.get_width() + 10, 35))
+                ekran.blit(br, (GENISLIK//2 - br.get_width()//2, y_pos + 2))
+            
+            if altitude < 2500.0 and v_s_fpm <= -1500.0:
+                pygame.draw.line(ekran, TURUNCU, (u_mx-120, u_my-120), (u_mx+120, u_my+120), 12)
+                pygame.draw.line(ekran, TURUNCU, (u_mx+120, u_my-120), (u_mx-120, u_my+120), 12)
+                t_msg = font_buyuk.render("TERRAIN", True, TURUNCU)
+                ekran.blit(t_msg, (GENISLIK//2 - t_msg.get_width()//2, u_my + 80))
+                pull_up_ikazi_ciz(ekran, u_mx, u_my, blink)
+
+        if ap_on: 
+            pygame.draw.rect(ekran, SIYAH, (GENISLIK-190, 20, 180, 30)); pygame.draw.rect(ekran, YESIL, (GENISLIK-190, 20, 180, 30), 2)
+            ekran.blit(font_kucuk.render("AUTO PILOT: ON", True, YESIL), (GENISLIK-165, 27))
+        
+        g_c = KIRMIZI if g_force_display >= 2.5 or g_force_display <= -1.0 else SARI if g_force_display >= 2.0 or g_force_display <= 0.0 else YESIL
+        pygame.draw.rect(ekran, SIYAH, (75, 470, 90, 35)); pygame.draw.rect(ekran, BEYAZ, (75, 470, 90, 35), 2)
+        ekran.blit(font_g.render(f"{g_force_display:.1f}G", True, g_c), (85, 472))
+
+        # V/M Etiketi ve Varyometre
+        ekran.blit(font_kucuk.render("V/M", True, BEYAZ), (GENISLIK - 158, 70))
+        pygame.draw.rect(ekran, SIYAH, (GENISLIK-160, 90, 80, 30)); pygame.draw.rect(ekran, BEYAZ, (GENISLIK-160, 90, 80, 30), 2)
+        ekran.blit(font_orta.render(f"{'+' if v_s_fpm >=0 else ''}{int(v_s_fpm)}", True, YESIL if v_s_fpm>=0 else KIRMIZI), (GENISLIK-150, 95))
+
+        pygame.display.flip(); saat.tick(60)
+    pygame.quit(); sys.exit()
+
+if __name__ == "__main__":
+    ana_dongu()
