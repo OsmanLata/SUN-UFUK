@@ -1,2 +1,2 @@
-# SUN-UFUK
+# SUNİ-UFUK
 OSMAN, ÖMER, ÖZGÜR adlı kullanıcıların ortaya koydukları çalışma
