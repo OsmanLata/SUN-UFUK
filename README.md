@@ -1,10 +1,13 @@
 # SUNİ-UFUK
 OSMAN, ÖMER, ÖZGÜR adlı kullanıcıların ortaya koydukları çalışma
 
-Proje Süreci ve Yapay Zeka İş Bölümü
+Proje Süreci ve Yapay Zekanın İş Bölümü
 Bu projede üç kişilik bir ekip olarak Google Gemini 3.1 Pro'dan yoğun şekilde faydalandık. 
 
-Yapay Zekanın Görevi: Projeyi sıfırdan adım adım yapay zekaya soru sorarak, analiz ve deneme yöntemleriyle; en basit yön tuşlarıyla lineer çalışan bir suni ufuktan, daha kompleks lineer tepki vermeyen ve ekstradan altimetre, varyometre, directional gyro gibi ekstradan birçok özelliği bulunan bir suni ufuk tasarımı elde etmeyi başardık.
+Yapay Zekayla birliktle projenin oluşlumu: Projeyi sıfırdan adım adım yapay zekaya soru sorarak, analiz ve deneme yöntemleriyle; en basit yön tuşlarıyla lineer çalışan bir suni ufuktan, daha kompleks lineer tepki vermeyen ve ekstradan altimetre, varyometre, directional gyro gibi ekstradan birçok özelliği bulunan bir suni ufuk tasarımı elde etmeyi başardık.
+
+
+Bu tasarım sürecinde yapay zekayı kullanırken yaşadğımız problemler şu şekilde;
 
 Eski Kuralları Bozma: Yeni özellikler eklerken eski kuralları unuttu. Örneğin, havacılık kuralı olan "sola yatışta ufkun sağa devrilmesi" mantığını sık sık standart bir oyun gibi (sola basınca ufkun sola yatması) algılayarak bozdu. Bunu komutlarla sürekli hatırlatmak zorunda kaldık.
 
