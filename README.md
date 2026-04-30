@@ -14,7 +14,7 @@ Projede dağıtılan görevleri Phyton üzerinden yapay zeka ile kendi aramızda
 
 
 
-Bu tasarım sürecinde yapay zekayı kullanırken yaşadğımız problemler şu şekilde;
+Bu tasarım sürecinde yapay zekayı kullanırken yaşadığımız problemler şu şekilde;
 
 Eski Kuralları Bozma: Yeni özellikler eklerken eski kuralları unuttu. Örneğin, havacılık kuralı olan "sola yatışta ufkun sağa devrilmesi" mantığını sık sık standart bir oyun gibi (sola basınca ufkun sola yatması) algılayarak bozdu. Bunu komutlarla sürekli hatırlatmak zorunda kaldık.
 
