@@ -4,8 +4,6 @@ OSMAN, ÖMER, ÖZGÜR adlı kullanıcıların ortaya koydukları çalışma
 Proje Süreci ve Yapay Zeka İş Bölümü
 Bu projede üç kişilik bir ekip olarak Google Gemini 3.1 Pro'dan yoğun şekilde faydalandık. 
 
-Ekibimizin Görevi: Renk ayarları, güç dağıtımları ve yön tuşları gibi temel arayüz tasarımını ve basit mantık işlemlerini biz üstlendik.
-
 Yapay Zekanın Görevi: Projenin "beyni" olarak; B737 MAX 8 aerodinamiği, PID kontrol mantığı ve Suni Ufuk (ADI) trigonometrisi gibi karmaşık matematiksel hesaplamaları yapay zekaya kodlattık. Daha sonra bu iki yapıyı entegre ettik.
 
 Eski Kuralları Bozma: Yeni özellikler eklerken eski kuralları unuttu. Örneğin, havacılık kuralı olan "sola yatışta ufkun sağa devrilmesi" mantığını sık sık standart bir oyun gibi (sola basınca ufkun sola yatması) algılayarak bozdu. Bunu komutlarla sürekli hatırlatmak zorunda kaldık.
