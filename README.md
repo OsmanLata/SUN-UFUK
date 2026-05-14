@@ -19,7 +19,6 @@ OSMAN, ÖMER, ÖZGÜR adlı kullanıcıların ortaya koydukları çalışma
 -Yere çok yakınlaşma uyarısı
 -Stall uyarısı
 -
-
 *TANITIM VİDEOSU LİNKİ;*
 https://www.youtube.com/watch?v=Wu1vsFLqozk
 -
