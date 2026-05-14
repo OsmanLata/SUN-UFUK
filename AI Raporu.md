@@ -1,3 +1,7 @@
+*AI RAPORU*
+-
+
+
 Proje Süreci ve Yapay Zekanın İş Bölümü Bu projede üç kişilik bir ekip olarak Google Gemini 3.1 Pro'dan yoğun şekilde faydalandık.
 
 Yapay Zekayla birliktle projenin oluşumu:
