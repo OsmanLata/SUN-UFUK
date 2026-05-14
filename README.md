@@ -1,6 +1,32 @@
 # SUNİ-UFUK
 OSMAN, ÖMER, ÖZGÜR adlı kullanıcıların ortaya koydukları çalışma
 
+
+
+*ÖZELLİKLER*
+-
+-Turn Coordinator
+-Speed Incdicator
+-Navigation Display
+-Otomatik Pilot
+-Varyometre
+-Altimetre
+-G göstergesi
+-Eşitlenen milibar göstergesi
+-
+-Bank Angle Uyarısı
+-Overspeed Uyarısı
+-Yere çok yakınlaşma uyarısı
+-Stall uyarısı
+-
+
+*TANITIM VİDEOSU LİNKİ;*
+https://www.youtube.com/watch?v=Wu1vsFLqozk
+-
+
+
+
+
 Proje Süreci ve Yapay Zekanın İş Bölümü
 Bu projede üç kişilik bir ekip olarak Google Gemini 3.1 Pro'dan yoğun şekilde faydalandık. 
 
@@ -28,27 +54,6 @@ Sonuç
 Yapay zeka bu projede harika işler çıkarmış olsada sürekli denetlenip yönlendirilmeye ihtiyacı var. Basit işleri bizim, ağır hesaplamaları yapay zekanın yaptığı ve hatalarını yine kendisine çözdürdüğümüz bu stratejiyle projeyi başarıyla tamamladık.
 
 
-
-
-*ÖZELLİKLER*
--
--Turn Coordinator
--Speed Incdicator
--Navigation Display
--Otomatik Pilot
--Varyometre
--Altimetre
--G göstergesi
--Eşitlenen milibar göstergesi
--
--Bank Angle Uyarısı
--Overspeed Uyarısı
--Yere çok yakınlaşma uyarısı
--Stall uyarısı
--
-
-*TANITIM VİDEOSU LİNKİ;*
-https://www.youtube.com/watch?v=Wu1vsFLqozk
 
 
 
