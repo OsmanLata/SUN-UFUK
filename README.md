@@ -27,3 +27,29 @@ Kapasite Aşımı: Kod 500 satıra ulaşıp maskelemeler ve uyarı sistemleri ek
 Sonuç
 Yapay zeka bu projede harika işler çıkarmış olsada sürekli denetlenip yönlendirilmeye ihtiyacı var. Basit işleri bizim, ağır hesaplamaları yapay zekanın yaptığı ve hatalarını yine kendisine çözdürdüğümüz bu stratejiyle projeyi başarıyla tamamladık.
 
+
+
+
+*ÖZELLİKLER*
+-
+-Turn Coordinator
+-Speed Incdicator
+-Navigation Display
+-Otomatik Pilot
+-Varyometre
+-Altimetre
+-G göstergesi
+-Eşitlenen milibar göstergesi
+-
+-Bank Angle Uyarısı
+-Overspeed Uyarısı
+-Yere çok yakınlaşma uyarısı
+-Stall uyarısı
+-
+
+*TANITIM VİDEOSU LİNKİ;*
+https://www.youtube.com/watch?v=Wu1vsFLqozk
+
+
+
+
