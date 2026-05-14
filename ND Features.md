@@ -5,7 +5,7 @@ OSMAN, ÖMER, ÖZGÜR adlı kullanıcıların ortaya koydukları çalışma
 
 *ÖZELLİKLER*
 -
--Turn Coordinator-
+-Turn Coordinator.
 -Speed Incdicator-
 -Navigation Display-
 -Otomatik Pilot
