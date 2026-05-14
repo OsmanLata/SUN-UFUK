@@ -18,6 +18,7 @@ OSMAN, ÖMER, ÖZGÜR adlı kullanıcıların ortaya koydukları çalışma
 - Overspeed Uyarısı
 - Yere çok yakınlaşma uyarısı
 - Stall uyarısı
+- Hızın Mach cinsinden gösterimi
 
 
 
