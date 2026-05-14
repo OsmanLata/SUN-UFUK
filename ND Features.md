@@ -14,10 +14,10 @@ OSMAN, ÖMER, ÖZGÜR adlı kullanıcıların ortaya koydukları çalışma
 - G göstergesi
 - Eşitlenen milibar göstergesi
 
--Bank Angle Uyarısı
--Overspeed Uyarısı
--Yere çok yakınlaşma uyarısı
--Stall uyarısı
+- Bank Angle Uyarısı
+- Overspeed Uyarısı
+- Yere çok yakınlaşma uyarısı
+- Stall uyarısı
 
 
 
